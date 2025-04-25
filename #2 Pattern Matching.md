@@ -140,3 +140,6 @@ Let's build something more interesting. Let's build an arithmetic expression tre
 
 We need to calculate evaluate an expression and return a value.
 
+<img width="559" alt="Screenshot 2025-04-25 at 15 42 24" src="https://github.com/user-attachments/assets/39021a37-e517-4e39-99ee-bffd8a977d34" />
+
+
