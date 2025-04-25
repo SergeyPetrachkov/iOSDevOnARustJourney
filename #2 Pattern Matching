@@ -1,0 +1,22 @@
+# Swift vs Rust pattern matching
+
+Hey everybody! It’s #2 record in the iOS dev on the Rust journey journal. 
+Today we’re gonna talk about pattern matching. Both Swift and Rust are modern languages that have lots of syntax sugar to make our lives sweeter. 
+
+I came to Swift after C# and Obj-C when it was still young and unstable language. But even back then if-let, guard-let, switch and enums with associated values were revolutionary to me. I still find Swift super fun language to work with, so let’s take a look at what we have in Rust, is it the same fun?
+
+## Basic switch / match
+
+When we have some value and we want to go through our options we can do something basic like this:
+
+```Swift
+let value = 2
+switch value {
+case 1:
+  print("One")
+case 2:
+  print("Two")
+default:
+  print("Something else \(valule)")
+}
+```
