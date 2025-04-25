@@ -139,7 +139,137 @@ fn main() {
 Let's build something more interesting. Let's build an arithmetic expression tree, some companies still ask that in their leetcode section :)
 
 We need to calculate evaluate an expression and return a value.
+Something like this:
 
 <img width="559" alt="Screenshot 2025-04-25 at 15 42 24" src="https://github.com/user-attachments/assets/39021a37-e517-4e39-99ee-bffd8a977d34" />
 
+We can build this thingy using enums and recursion.
 
+With swift:
+```Swift
+import Testing
+
+enum Operation {
+	case add, sub, mul, div
+}
+
+indirect enum Expression {
+	case op(Operation, Expression, Expression)
+	case value(Int)
+}
+
+func eval(e: Expression) -> Int {
+	switch e {
+	case .value(let value):
+		return value
+	case .op(let op, let lhs, let rhs):
+		let lhsValue = eval(e: lhs)
+		let rhsValue = eval(e: rhs)
+		switch op {
+		case .add:
+			return lhsValue + rhsValue
+		case .sub:
+			return lhsValue - rhsValue
+		case .mul:
+			return lhsValue * rhsValue
+		case .div:
+			return lhsValue / rhsValue
+		}
+	}
+}
+
+@Test
+func recursion() async throws {
+	let lhs = Expression.op(.mul, .value(10), .value(9))
+	let rhs = Expression.op(.mul, .op(.sub, .value(3), .value(4)), .value(5))
+
+	let result = eval(e: Expression.op(.add, lhs, rhs))
+	#expect(result == 85)
+}
+```
+
+And with Rust:
+```rust
+enum Operation {
+    Add,
+    Sub,
+    Mul,
+    Div,
+}
+
+enum Expression {
+    /// An operation on two subexpressions.
+    Op { op: Operation, left: Box<Expression>, right: Box<Expression> },
+
+    /// A literal value
+    Value(i64),
+}
+
+fn eval(e: Expression) -> i64 {
+    match e {
+        Expression::Value(value) => value,
+        Expression::Op { op, left, right } => {
+            let left_value = eval(*left);
+            let right_value = eval(*right);
+            match op {
+                Operation::Add => left_value + right_value,
+                Operation::Sub => left_value - right_value,
+                Operation::Mul => left_value * right_value,
+                Operation::Div => left_value / right_value,
+            }
+        }
+    }
+}
+
+#[test]
+fn test_recursion() {
+    let term1 = Expression::Op {
+        op: Operation::Mul,
+        left: Box::new(Expression::Value(10)),
+        right: Box::new(Expression::Value(9)),
+    };
+    let term2 = Expression::Op {
+        op: Operation::Mul,
+        left: Box::new(Expression::Op {
+            op: Operation::Sub,
+            left: Box::new(Expression::Value(3)),
+            right: Box::new(Expression::Value(4)),
+        }),
+        right: Box::new(Expression::Value(5)),
+    };
+    assert_eq!(
+        eval(Expression::Op {
+            op: Operation::Add,
+            left: Box::new(term1),
+            right: Box::new(term2),
+        }),
+        85
+    );
+}
+```
+
+Okay okay!
+
+What does Rust have that swift doesn't?
+
+Not exactly the pattern matching, but something about initialisers. Let's imagine we have a struct Person and we have an instance of such struct. And then we want to create a clone, but we want only one field to be different. Then we can do the following:
+
+```Rust
+struct Person {
+    name: String,
+    age: u8,
+    job: String,
+}
+
+let peter = Person {
+        name: String::from("Peter"),
+        age: 27,
+        job: "Developer"
+    };
+
+let avery = Person { name: String::from("Avery"), ..peter };
+```
+
+Pretty cool, huh!?
+
+Ok, that's all for today :) See you soon.
